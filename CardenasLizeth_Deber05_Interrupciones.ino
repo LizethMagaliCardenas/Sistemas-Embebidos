@@ -1,3 +1,10 @@
+/*UNIVERSIDAD TÉCNICA DEL NORTE 
+ * FICA - CITEL- SISTEMAS EMBEBIDOS
+ *COD 15: MANEJO DE INTERRUPCIONES Y SERVO MOTOR
+ *OBJETIVO:Realizar un programa que mediante interrupciones tenga 3 modos: Inicio del sistema, giro de motor y fin de programa. 
+ *El giro debe ser ingresado por comunicación serial. 
+ *Nombre: Magali Cárdenas
+  */
 #include <Servo.h>
  Servo servo1;// creación de objeto para servo 1
  int conversor1; // variable para conversor 1
