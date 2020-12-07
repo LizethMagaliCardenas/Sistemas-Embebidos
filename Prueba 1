@@ -1,0 +1,493 @@
+///////////////////ejercicio1///////////////////////////////
+/////////////////////////MASTER/////////////////////////////
+#include <Wire.h>  
+#include <Keypad.h>
+#include<LiquidCrystal.h>
+ 
+
+const int rs = A0, en = A1, d4 = A2, d5 = A3, d6 = A4, d7 = A5;
+
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+char dato;  
+String caracter;
+String datoDig;
+void setup() {
+  Wire.begin();  
+  Serial.begin(9600);  
+  lcd.begin(16,2);
+  lcd.setCursor(0,0);
+  lcd.print("Digite palabra");
+  lcd.setCursor(0,1);
+  Wire.onReceive(receiveEvent); 
+}
+
+void loop() {
+  if(Serial.available()>0){
+    dato=Serial.read();  
+    Wire.beginTransmission(4); 
+    Wire.write(dato); 
+    Wire.endTransmission();  
+  }
+  lcd.setCursor(0,1);
+  delay(1000);
+}
+
+void receiveEvent(){
+   while(Wire.available()){
+ char palabra=Wire.read(); 
+ switch(palabra){
+    case 'a':
+      caracter=caracter+"· —";
+    break;
+    case 'b':
+      caracter=caracter+" — · · ·";
+    break;
+    case 'c':
+      caracter=caracter+"— · — ·";
+    break;
+    case 'd':
+      caracter=caracter+"— · ·";
+    break;
+    case 'e':
+      caracter=caracter+"·";
+    break;
+    case 'f':
+      caracter=caracter+" · · — ·";
+    break;
+    case 'g':
+      caracter=caracter+" — — ·";
+    break;
+    case 'h':
+      caracter=caracter+"· · · ·";
+    break;
+    case 'i':
+      caracter=caracter+"· ·";
+    break;
+    case 'j':
+      caracter=caracter+"· — — —";
+    break;
+    case 'k':
+      caracter=caracter+" — · —";
+    break;
+    case 'l':
+      caracter=caracter+"· — · ·";
+    break;
+    case 'm':
+      caracter=caracter+" — —";
+    break;
+    case 'n':
+      caracter=caracter+"— ·";
+    break;
+    case 'o':
+      caracter=caracter+"— — —";
+    break;
+    case 'p':
+      caracter=caracter+"· — — ·";
+    break;
+    case 'q':
+      caracter=caracter+"— — · —";
+    break;
+    case 'r':
+      caracter=caracter+" · — ·";
+    break;
+    case 's':
+      caracter=caracter+"· · ·";
+    break;
+    case 't':
+      caracter=caracter+"—";
+    break;
+    case 'u':
+      caracter=caracter+" · · —";
+    break;
+    case 'v':
+      caracter=caracter+"· · · —";
+    break;
+    case 'w':
+      caracter=caracter+"· — —";
+    break;
+    case 'x':
+      caracter=caracter+"— · · —";
+    break;
+    case 'y':
+      caracter=caracter+"— · — —";
+    break;
+    case 'z':
+      caracter=caracter+"— — · ·";
+    break;
+    case '0':
+      caracter=caracter+"— — — — —";
+    break;
+    case '1':
+      caracter=caracter+"· — — — —";
+    break;
+    case '2':
+      caracter=caracter+"· · — — —";
+    break;
+    case '3':
+      caracter=caracter+"· · · — —";
+    break;
+    case '4':
+      caracter=caracter+"· · · · —";
+    break;
+    case '5':
+      caracter=caracter+"· · · · ·";
+    break;
+    case '6':
+      caracter=caracter+"— · · · ·";
+    break;
+    case '7':
+      caracter=caracter+"— — · · ·";
+    break;
+    case '8':
+      caracter=caracter+"— — — · ·";
+    break;
+    case '9':
+      caracter=caracter+"— — — — ·";
+    break;
+    case '.':
+      caracter=caracter+"· — · — · —";
+    break;
+     case ',':
+      caracter=caracter+"— · — · — —";
+    break;
+    case '?':
+      caracter=caracter+"· · — — · ·";
+    break;
+    case '"':
+      caracter=caracter+"· — · · — ·";
+    break;
+    case '!':
+      caracter=caracter+"— — · · — —";
+    break;
+    }
+   }
+   Serial.println(caracter);
+   if(Serial.available()>0) {
+   datoDig=Serial.read();
+   }
+   lcd.print(datoDig);
+}
+
+/////////////////////////////ESCLAVO//////////////////////////////////
+#include <Wire.h>
+
+String caracter; 
+char dato;
+String datoDig;
+
+void setup() {
+  Wire.begin(4);
+  Serial.begin(9600);
+  Wire.onReceive(receiveEvent); 
+  Wire.onRequest(requestEvent);
+}
+
+void loop() {
+  delay(100);    
+}//end void loop
+
+void receiveEvent(int bytes){
+ while(Wire.available()){
+ char palabra=Wire.read(); 
+   switch(palabra){
+    case 'a':
+      caracter=caracter+"· —";
+    break;
+    case 'b':
+      caracter=caracter+" — · · ·";
+    break;
+    case 'c':
+      caracter=caracter+"— · — ·";
+    break;
+    case 'd':
+      caracter=caracter+"— · ·";
+    break;
+    case 'e':
+      caracter=caracter+"·";
+    break;
+    case 'f':
+      caracter=caracter+" · · — ·";
+    break;
+    case 'g':
+      caracter=caracter+" — — ·";
+    break;
+    case 'h':
+      caracter=caracter+"· · · ·";
+    break;
+    case 'i':
+      caracter=caracter+"· ·";
+    break;
+    case 'j':
+      caracter=caracter+"· — — —";
+    break;
+    case 'k':
+      caracter=caracter+" — · —";
+    break;
+    case 'l':
+      caracter=caracter+"· — · ·";
+    break;
+    case 'm':
+      caracter=caracter+" — —";
+    break;
+    case 'n':
+      caracter=caracter+"— ·";
+    break;
+    case 'o':
+      caracter=caracter+"— — —";
+    break;
+    case 'p':
+      caracter=caracter+"· — — ·";
+    break;
+    case 'q':
+      caracter=caracter+"— — · —";
+    break;
+    case 'r':
+      caracter=caracter+" · — ·";
+    break;
+    case 's':
+      caracter=caracter+"· · ·";
+    break;
+    case 't':
+      caracter=caracter+"—";
+    break;
+    case 'u':
+      caracter=caracter+" · · —";
+    break;
+    case 'v':
+      caracter=caracter+"· · · —";
+    break;
+    case 'w':
+      caracter=caracter+"· — —";
+    break;
+    case 'x':
+      caracter=caracter+"— · · —";
+    break;
+    case 'y':
+      caracter=caracter+"— · — —";
+    break;
+    case 'z':
+      caracter=caracter+"— — · ·";
+    break;
+    case '0':
+      caracter=caracter+"— — — — —";
+    break;
+    case '1':
+      caracter=caracter+"· — — — —";
+    break;
+    case '2':
+      caracter=caracter+"· · — — —";
+    break;
+    case '3':
+      caracter=caracter+"· · · — —";
+    break;
+    case '4':
+      caracter=caracter+"· · · · —";
+    break;
+    case '5':
+      caracter=caracter+"· · · · ·";
+    break;
+    case '6':
+      caracter=caracter+"— · · · ·";
+    break;
+    case '7':
+      caracter=caracter+"— — · · ·";
+    break;
+    case '8':
+      caracter=caracter+"— — — · ·";
+    break;
+    case '9':
+      caracter=caracter+"— — — — ·";
+    break;
+    case '.':
+      caracter=caracter+"· — · — · —";
+    break;
+     case ',':
+      caracter=caracter+"— · — · — —";
+    break;
+    case '?':
+      caracter=caracter+"· · — — · ·";
+    break;
+    case '"':
+      caracter=caracter+"· — · · — ·";
+    break;
+    case '!':
+      caracter=caracter+"— — · · — —";
+    break;
+    }
+    
+   }
+   Serial.println(caracter);
+   if(Serial.available()>0) {
+   datoDig=Serial.read();
+   }
+}
+
+void requestEvent() {
+  if(Serial.available()>0){
+    dato=Serial.read();  
+    Wire.beginTransmission(4); 
+    Wire.write(dato); 
+    Wire.endTransmission();  
+  }
+}
+////////////////////////ejercicio2////////////////////////
+ #include<LiquidCrystal.h>
+ LiquidCrystal lcd(13,12,11,10,9,8);
+ #include<MsTimer2.h>
+ 
+ int conversor1;
+ int on=0; // int o
+ int cont;//int 1
+ int i;
+ int j;
+ int decenso;
+ 
+void setup() {
+  lcd.begin(16,2);
+  MsTimer2::set(1000,contador);
+  MsTimer2::start();
+  Serial.begin(9600);
+  attachInterrupt(0,activacion,LOW);
+  attachInterrupt(1,contador,LOW);
+  
+
+}
+
+void loop() {
+  if (on==2){
+  
+  conversor1 = analogRead(0);            
+  conversor1 = map(conversor1, 0, 1023, 10, 20); 
+  decenso=conversor1;
+  for(;i<cont-1;i++){ 
+   lcd.setCursor(1,0);
+   lcd.print(decenso);
+   delay(200);
+  }
+  }    
+   
+}
+   
+void activacion(){
+
+  switch(on){
+    case 0:
+    lcd.setCursor(0,0);
+    lcd.print("INICIO DE SISTEMA");
+    delay(500);
+    
+    for (int pos = 0; pos < 16; pos++) {
+      lcd.scrollDisplayLeft(); 
+    lcd.print("    De un valor al potenciometro");
+    delay(9000);
+    lcd.setCursor(0,0);
+    }
+    Serial.println("INICIO DE SISTEMA");
+    Serial.println("De un valor al potenciometro");
+    
+    on++;
+    break;
+    case 1:
+    lcd.setCursor(0,0);
+    lcd.print("Inicio conteo regresivo");
+    delay(500);
+    Serial.println("Inicio de conteo regresivo");
+    on++;
+    break;
+    case 2:
+    lcd.setCursor(0,0);
+    lcd.print("Fin de conteo");
+    delay(500);
+    lcd.setCursor(0,0);
+    lcd.print("Digite nuevamente");
+    delay(500);
+    Serial.println("Fin de conteo");
+    Serial.println("Digite nuevamente");
+    cont=0;
+    i=0;
+    j=0;
+    on=0;
+    break;
+    
+  }
+}
+
+void contador(){
+  if(on==1){
+    cont<20;
+    
+    Serial.println(String("Conteo ")+String(cont));
+    lcd.setCursor(0,0);
+    lcd.print(cont);
+    delay(500);
+  }
+}
+
+
+/////////////////////////////ejercicio3////////////////////
+#include <TimerOne.h> 
+ int conversor1;
+ 
+ const int led1=8;
+ int on=0; // int o
+ int cont;//int 1
+ int tiempo;
+ String dato;
+
+void setup() {
+  
+  pinMode(led1,OUTPUT);
+  Serial.begin(9600);
+  attachInterrupt(0,activacion,LOW);
+  
+
+}
+
+void loop() {
+  if (on==2){
+
+  conversor1 = analogRead(0);            
+  conversor1 = map(conversor1, 0, 1023, 0, 10);     
+  tiempo=conversor1;
+         
+  if(Serial.available()>0){        
+     dato=Serial.readString();    
+     tiempo=dato.toInt();           
+    }
+  if(tiempo<=10&&tiempo>0){
+     digitalWrite(led1,HIGH);
+     delay(tiempo*1000);
+     digitalWrite(led1,HIGH);
+     delay(1000);                
+  }
+         
+   else
+   Serial.println("Dato Incorrecto");  
+   delay(200); 
+      
+  }
+
+}
+void activacion(){
+  
+  switch(on){
+    case 0:
+    Serial.println("INICIO DE SISTEMA");
+    Serial.println("Modifique mediante potenciometro tiempo de activacion de led");
+    Serial.println("O Ingrese el tiempo de activación del led manualmente: ");
+    on++;
+    break;
+    case 1:
+    Serial.println("Inicio de activación");
+    on++;
+    break;
+    case 2:
+    Serial.println("Fin de sistema");
+    cont=0;
+    on=0;
+    
+    break;
+    
+  }
+}
