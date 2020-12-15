@@ -1,0 +1,177 @@
+///////////////////SIGNAL/////////////////////////
+
+//construccion del filtro
+double filter_taps[7] = {
+  0.036339855837476884,
+  0.10904207824156188,
+  0.19081761980371023,
+  0.22715747564118702,
+  0.19081761980371023,
+  0.10904207824156188,
+  0.036339855837476884
+};
+double ECG_200Hz[68] = {//Datos de la señal
+386,
+386,
+382,
+379,
+397,
+396,
+416,
+431,
+442,
+470,
+481,
+514,
+530,
+535,
+553,
+546,
+556,
+552,
+541,
+545,
+524,
+520,
+505,
+487,
+488,
+466,
+467,
+459,
+449,
+457,
+443,
+453,
+450,
+444,
+456,
+443,
+454,
+452,
+450,
+464,
+454,
+466,
+466,
+464,
+477,
+468,
+480,
+480,
+477,
+489,
+479,
+491,
+487,
+483,
+493,
+484,
+498,
+499,
+498,
+516,
+513,
+544,
+578,
+627,
+700,
+751,
+816,
+854,
+};
+
+/////////////////////////////////////////////DESARROLLO///////////////////////////////////////////
+
+#define tam_sig 68 
+ #define tam_filtro 7 
+ extern double ECG_200Hz[tam_sig];  //señal de muestra
+ extern double filter_taps[tam_filtro]; 
+ double output[tam_sig+tam_filtro];  // vectores de salida 
+ double output_sig[tam_sig];
+ double prom_ori; //guardar datos en variables
+ double prom_filt;
+
+ void media_filter(double *sig_in, double *output_sig, int sig_tam, int filer); //suavizado
+ void convolution(double *sig_in,double *sig_out, double *imp, int sig_tam, int impt_tam); //convolución
+
+ void plot_signal(void);  // función gráfica
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+ convolution((double *)&ECG_200Hz, (double *)&output[0], (double *)&filter_taps[0],
+              (int) tam_sig, (int) tam_filtro); // funcion de la convulcion de las señales
+              
+ filtro_Signal((double *)&ECG_200Hz, (double *)&output_sig[0], (int) tam_sig,5); //funcion de algoritmo media
+ SigRuid();   // Relación señal-ruido
+ plot_signal();  // graficar las señales
+ 
+ delay(100);
+}
+
+////////////Filtros fir(convolución)///////////////
+void convolution (double *sig_in,double *sig_out, double *imp, int sig_tam, int fil_tam){ 
+  int i,j; 
+  //poner ceros a vector de salida
+  for(i=0; i<(sig_tam+fil_tam); i++){//ciclo for con las variables finales contrarias
+    sig_out[i]=0;
+    }
+    for(i=0; i<sig_tam; i++){
+      for(j=0; j<fil_tam; j++){
+        sig_out[i+j]=sig_out[i+j] + sig_in[i]*imp[j];//se mueve en la posicion i+j
+        }
+      }
+  }
+// suavizado Señal 
+void filtro_Signal(double *sig_in, double *output_sig, int sig_tam, int filter){
+  int i,j;   // declaramos varibles 
+ 
+ for (i=floor(filter/2); i<sig_tam-floor(filter/2)-1;i++){
+    output_sig[i]-0;
+    for(j=-floor(filter/2);j<floor(filter/2);j++){
+      output_sig[i]=output_sig[i]+sig_in[i+j];
+      }
+     output_sig[i]=output_sig[i]+sig_in[i+j];
+    }
+  }
+
+  //Relación de la señal ruido
+void SigRuid(){
+  int i;
+  for(i=0;i<100;i++){
+    prom_ori=prom_ori+ECG_200Hz[i];//Guardado de datos 
+    }
+   double prom_ori1 = prom_ori/200; //división
+   for(i=0;i<100;i++){
+    prom_filt=prom_filt+output[i];
+    }
+   double prom_filt2 = prom_filt/200;
+   //cambio de datos mediante regla de 3
+   double vfilt = (prom_filt2*5)/1023;
+   double vsalida = (prom_ori1*5)/1023; 
+   double sgmetric = 20*log(vfilt/vsalida);
+   
+ //impresiones
+  Serial.println(String("Señal ingresada: ")+String(prom_ori1));//valores promedios
+  Serial.println(String("Señal filtrada: ")+String(prom_filt2));   
+  Serial.println(String("Voltaje de señal ingresada: ")+String(vsalida));//impreción de valores promedio
+  Serial.println(String("Voltaje de señal filtrada: ")+String(vfilt)); 
+  Serial.println(String("SNR: ")+String(sgmetric)+String(" decibeles"));   //imprime el valor de la metrica en decibeles
+  }
+  
+////////////método para plotear(Graficar el resultado)////////////////
+void plot_signal(void){   // graficar resultado
+  int i;
+  for(i=0; i<tam_sig; i++){
+    Serial.print(ECG_200Hz[i]);// grafica de la señal de entrada
+    Serial.print(",");
+    Serial.print(output_sig[i]*2.7); // grafica del suavizado de señal
+    Serial.print(",");
+    Serial.println(output[i]*1.1);// grafica de la convolución
+    delay(5);
+    }
+  }
+
